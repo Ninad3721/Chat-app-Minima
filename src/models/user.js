@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const UserSchema = new mongoose.Schema({
     password:
     {
+        sparse : true,
      required:true,
        type:String,
        minlength:7,
@@ -16,13 +17,17 @@ const UserSchema = new mongoose.Schema({
     },
     username:
     {
+        
+        sparse : true,
         required: true,
         type:String,
 
     },
     email:
     {
-         unique: true,
+        index:true,
+        unique: true,
+        sparse : true,
         required: true,
         type: String,
         validate(value)
@@ -34,12 +39,13 @@ const UserSchema = new mongoose.Schema({
         }
 
     },
-    room_name:
-    {
+    room:[  {
+        sparse:true,
         unique: true,
-        required: true,
-        type: String,
-    }
+       required: true,
+       type: String,
+   }]
+  
 })
 const user = mongoose.model("user", UserSchema)
 module.exports = user 

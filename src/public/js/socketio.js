@@ -1,11 +1,10 @@
 //templates 
 
- const messageTemplate = document.querySelector("#message-template").innerHTML 
+const messageTemplate = document.querySelector("#message-template").innerHTML 
 const locationTemplate = document.querySelector("#location-template").innerHTML
 
-//options
-const {chatRoom_input} = Qs.parse(location.search, {ignoreQueryPrefix: true})
-console.log({chatRoom_input})
+
+const room_name = document.querySelector("#chatRoom_input").innerHTML
 
 
 const iofun =io()
@@ -42,6 +41,7 @@ document.querySelector("#form").addEventListener("submit", (e)=>
         console.log("Message delieverd")
         document.querySelector("#form-input").value=""
     })
+    iofun.emit("join", (room_name))
 })
 
 
