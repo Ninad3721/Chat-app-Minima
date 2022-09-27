@@ -4,7 +4,6 @@ const messageTemplate = document.querySelector("#message-template").innerHTML
 const locationTemplate = document.querySelector("#location-template").innerHTML
 
 
-const room_name = document.querySelector("#chatRoom_input").innerHTML
 
 
 const iofun =io()
@@ -16,11 +15,14 @@ iofun.on("geo-location",(location)=>
         createdAt: location.createdAt
     })
     document.querySelector("#message").insertAdjacentHTML('beforeEnd', html)
-},()=>
+},
+()=>
 {
     console.log("Location shared")
 })
- iofun.on("message", (message)=>
+
+// Sending message
+ iofun.on("message", (message)=> 
  {
     console.log(message.createdAt)
     const html = Mustache.render(messageTemplate,{
@@ -34,14 +36,15 @@ iofun.on("geo-location",(location)=>
 
 
 document.querySelector("#form").addEventListener("submit", (e)=>
-{ e.preventDefault()
+{ iofun.emit("join")
+    e.preventDefault()
     const message = document.querySelector("#form-input").value
     iofun.emit("send-message", (message),()=>
     {  
         console.log("Message delieverd")
         document.querySelector("#form-input").value=""
     })
-    iofun.emit("join", (room_name))
+    
 })
 
 

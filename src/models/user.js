@@ -1,14 +1,16 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
+const validator = require('validator')
 const UserSchema = new mongoose.Schema({
     password:
     {
         sparse : true,
-     required:true,
-       type:String,
-       minlength:7,
+        required:true,
+        type:String,
+     
         validate(value)
         {
-            if(vlaue== "password")
+            if(value == "password")
             {
                 throw new Error("Try another pasword")
             }
@@ -32,7 +34,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         validate(value)
         {
-            if(validator.isEmail(value) == flase)
+            if(validator.isEmail(value) == false)
             {
                 throw new Error("Enter a vlaid email")
             }
@@ -44,8 +46,27 @@ const UserSchema = new mongoose.Schema({
         unique: true,
        required: true,
        type: String,
-   }]
+   }],
+   tokens:
+  [
+    {
+        token:
+        {
+                type:String,
+                require:true,
+        }
+       }
+  ] 
   
 })
+
+UserSchema.methods.genAuthToken = async function()
+{
+    const user = this
+    const token =  jwt.sign({_id: user._id.toString()},'thisismytoken')
+    user.tokens = user.tokens.concat({token})
+      await user.save()
+     return token
+}
 const user = mongoose.model("user", UserSchema)
 module.exports = user 

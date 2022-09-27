@@ -15,21 +15,17 @@ const mongoose = require('mongoose')
 const Chatroom = require("./models/chatroom")
 const user = require('../src/models/user')
 const { application } = require('express')
-//import { username,password,email } from '../public/js/login.js'     
-//   console.log({ username,password,email })                                              
-
+const auth = require("./middleware/Auth")
+const {userlist,addUser,removeUser, getUser, getUserList} = require("../src/utils/trackUsers")
 const server = http.createServer(app)  //We explicitly create a server to pass that as an argument to the socketio and work with it express do it implicitly 
 const  io = socketio(server)
 app.use(express.static(publicDirapth))
 app.use(bodyparser.urlencoded({extended:false, type:"application/x-www-form-urlencoded"}))
-app.set("view engine", "ejs")
+// app.set("view engine", "ejs")
 
 
-// app.get("/login.html", (req,res)=>
-// {
-//    res.render("login.html")
-//    console.log("login rendered")
-// })
+
+let chatroom;
 app.get("/" , (req,res)=>
 {
 console.log('FILE EXECUTED')
@@ -39,34 +35,45 @@ console.log('FILE EXECUTED')
 app.post("/", async(req,res)=>
  { 
     console.log("post method executed")
-    const user = await new User()
-    var username = req.body.username;
-    var email =req.body.email;
-    var pass = req.body.password;
-    var room = req.body.room
-     var data={
+    const user = await new User(req.body)
+    // var username = req.body.username;
+    // var email =req.body.email;
+    // var pass = req.body.password;
+    // var room = req.body.room
+    //  var data={
     
-        "username": username,
-        "email":email,
-        "password":pass,
-        "room":room,
-     }
+    //     "username": username,
+    //     "email":email,
+    //     "password":pass,
+    //     "room":room,
+    //  }
     
-    mongoose.connection.collection('users').insertOne(data,function(err, collection){
-     if (err) throw err;
-     res.sendFile(__dirname+"/public/login.html")
-     console.log("Record inserted Successfully");        
- })
+     try{
+        const token = await user.genAuthToken()
+        
+        await res.sendFile(__dirname+"/public/login.html")
+        console.log(token)
+        console.log("Record inserted Successfully");  
+     }catch(e)
+     {
+        res.status(400).send(e)
+        console.log(e);
+      }
+
+//     mongoose.connection.collection('users').insertOne(data,function(err, collection){
+//      if (err) throw err;
+           
+//  })
 ;})
- app.get("/login", (req,res)=>
+ app.get("/login",(req,res)=>
 {
     res.sendFile(__dirname +"/public/login.html")
 })
 app.post("/login" , async(req, res)=>
 {
- 
-    var username = req.body.username
-    var password = req.body.password
+
+     var username = req.body.username
+     var password =  req.body.password
 
 
     var data = 
@@ -84,76 +91,97 @@ app.post("/login" , async(req, res)=>
    {
     return  res.sendFile(__dirname +"/public/tryagain_login.html")
    }
-//    res.set({'Content-Type': 'application/xhtml+xml; charset=utf-8'});
-//    res.locals.text="hello";
+   res.redirect("./chat?username="+username+"&password="+password)
 
-    res.render("chat")
+
+
 })
 // app.get('/chat', (req,res)=>
 // {
 //     res.render("chat")
 // })
 
-app.post("/chat" , async (req,res)=>
+app.post("/chat" , async (req,res,chatroom,socket,io)=>
 {
   
 
-    var chatroom = req.body.chatroom
-    var data =
-    {
-        // "username" : username,
-        "room" : chatroom,
-    }
 
- const  user = await mongoose.connection.collection('users').findOne({room:req.body.chatroom})  
-console.log(user.username)
+    chatroom = req.body.chatroom
+    console.log(req.params.username)
+ const  user = await mongoose.connection.collection('users').findOne({room:req.body.chatroom})
+ socket.on("send-message",(message, callback)=>
+ {
+     // const user = getUser(socket.id)
+     
+     console.log(chatroom)
+     io.to(chatroom).emit("message", getMessage(message))
+     // callback()
+ })
+})
 
-   res.render("chat", {
-    user
-   })
+app.get("/chat" , (req,res)=>
+{
+    console.log('Hi')
+    console.log(req.query.username)
+    res.sendFile(__dirname +"/public/chat.html")
+   
 
-}
+})
 
-)
 
-// app.get("/chat", async (req, res)=>
-// {
-//     const user = await mongoose.connection.collection('users').findOne({username:"varun"})
-//     const username = user.username
-//     res.render("chat", 
-//     {
-//         name: username,
-//     })
-    
-    
-// })
-//    console.log(username)
-//     const chatroom_user = await Chatroom.findOne({username: data.username})
-//     console.log(chatroom_user.chatroom)
 
 
 
 io.on('connection', (socket)=>
 { 
     socket.broadcast.emit('message' , getMessage("A new user has joined"))
+
+
+    // socket.on("send-message",(message, callback)=>
+    // {
+    //     // const user = getUser(socket.id)
+        
+    //     console.log(chatroom)
+    //     io.to(chatroom).emit("message", getMessage(message))
+    //     // callback()
+    // })
     socket.on("send-location", ({latitude, longitude}, callback)=>
-    {console.log(latitude, longitude)
-        socket.emit("geo-location" ,getLocation(`https://www.google.com/maps/@${latitude},${longitude}`))
+    {   
+        const user = getUser(socket.id)
+
+        socket.to(user.room).emit("geo-location" ,getLocation(`https://www.google.com/maps/@${latitude},${longitude}`))
         callback()
     })
-    socket.on("send-message",(message, callback)=>
-    {
-        io.emit("message", getMessage(message))
-        callback()
-    })
+
+
+
+
+
     socket.on("disconnect" , ()=>
     {
-        socket.broadcast.emit("message", getMessage("A user has left"))
+        const user = removeUser(socket.id)
+        if (user) {
+            io.to(user.room).emit('message', getMessage(`${user.username} has left!`))
+        }
     })
-    socket.on("join" , (room_name)=>
-{
-    socket.join(room_name)
-})
+
+        
+        socket.on("join" , (options, callback, chatroom)=>{
+    { 
+        console.log("joined")
+        console.log(socket.id)
+        // const {error, user} = addUser({id:socket.id, username, roomname})
+    
+   
+    
+    // console.log(userlist)
+        socket.join(chatroom)
+        socket.emit('message', getMessage('Welcome!'))
+        socket.broadcast.to(chatroom).emit('message', getMessage(`${user.username} has joined!`))
+
+        // callback()
+    }
+    })
 })
 
     
