@@ -10,57 +10,74 @@ const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
 const bodyparser = require("body-parser")
-app.use(bodyparser.urlencoded({extended:false, type:"application/x-www-form-urlencoded"}))
+app.use(bodyparser.urlencoded({ extended: false, type: "application/x-www-form-urlencoded" }))
 const port = process.env.PORT || 3000
 const publicDirectoryPath = path.join(__dirname, '../public')
 console.log(publicDirectoryPath)
 const mongoose = require("mongoose")
+const multer = require('multer')
 require("../public/db/mongoose")
 
 app.use(express.static(publicDirectoryPath))
 
 
-//Signup page psot request
-app.post("/", async (req,res)=>
-{
 
-     console.log("POST method on signup page executed")
-     console.log(req.body)
-     const user = new User(req.body)
-         user.save()
-         res.status('200').redirect("/login.html?room="+req.body.room)
-  
-   
+
+
+
+
+//Signup page psot request
+app.post("/", async (req, res) => {
+
+    console.log("POST method on signup page executed")
+    console.log(req.body)
+    const user = new User(req.body)
+    user.save()
+    res.status('200').redirect("/login.html?room=" + req.body.room)
+
+
 
 })
 
-app.post("/login.html" , async(req, res)=>
-{
+app.post("/login.html", async (req, res) => {
 
-     var username = req.body.username
-     var password =  req.body.password
+    var username = req.body.username
+    var password = req.body.password
 
-    var data = 
+    var data =
     {
         "username": username,
-        "password" :password,
-      
-    }
- const user = await mongoose.connection.collection('users').findOne({username:data.username})
-//  console.log(user.room[0])
-   if(!user)
-   {
-   return  res.sendFile(publicDirectoryPath+"/tryagain.html")}
-   if(user.password !== data.password)
-   {
-    return  res.sendFile(publicDirectoryPath+"/tryagain.html")
-   }
-res.redirect("./chat.html?username="+username+"&room="+user.room[0])
+        "password": password,
 
-//  res.sendFile(publicDirectoryPath+"/chat.html")
+    }
+    const user = await mongoose.connection.collection('users').findOne({ username: data.username })
+    //  console.log(user.room[0])
+    if (!user) {
+        return res.sendFile(publicDirectoryPath + "/tryagain.html")
+    }
+    if (user.password !== data.password) {
+        return res.sendFile(publicDirectoryPath + "/tryagain.html")
+    }
+    res.redirect("./chat.html?username=" + username + "&room=" + user.room[0])
+
+    //  res.sendFile(publicDirectoryPath+"/chat.html")
 
 })
 
+app.post("/chat.html", async (req, res) => {
+    // socket.join(req.body.chatroom)
+    // console.log(req)
+    console.log("connected succesfully to " + req.body.chatroom)
+    res.redirect("./chat.html?username=" + req.query?.username + "&room=" + req.body.chatroom)
+    // if (await mongoose.connection.collection('users').findOne({ : req.body.chatroom })) {
+    //     console.log("Room name already exist")
+    // }
+    // else {
+    //     mongoose.connection.collection('users').insertOne({ room: req.body.chatroom })
+    // }
+    const obj = await mongoose.connection.collection('users').find({ room: "Ninad" })
+    console.log(obj)
+})
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
