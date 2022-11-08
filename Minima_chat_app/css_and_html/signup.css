@@ -1,0 +1,105 @@
+body {
+    background-image: url("wordmap.jpg");
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: 'Bebas Neue', cursive;
+}
+
+.box {
+    border: 2px solid white;
+    border-radius: 20px;
+    width: 500px;
+    margin-top: 10px;
+}
+
+.title {
+    color: white;
+    font-size: 60px;
+    margin: 20px;
+}
+
+.username-input {
+    text-align: center;
+    border: 5px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 15px 45px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.password-input {
+    text-align: center;
+    border: 5px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 15px 45px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.email-input {
+    text-align: center;
+    border: 5px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 15px 45px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.room-input {
+    text-align: center;
+    border: 5px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 15px 45px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.submit {
+    text-align: center;
+    border: 5px;
+    border-radius: 20px;
+    background-color: rgb(93, 93, 93);
+    color: white;
+    padding: 15px 148px;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: 'Bebas Neue', cursive;
+}
+
+.submit:hover {
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+}
+
+.logo {
+    width: 300px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.login {
+    color: white;
+    font-size: 20px;
+}
+
+.login:hover {
+    color: rgb(93, 93, 93);
+}

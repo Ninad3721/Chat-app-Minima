@@ -1,0 +1,184 @@
+body {
+    /* background-image: url('wordmap.jpg');   */
+    background-color: black;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: 'Bebas Neue', cursive;
+    display: inline;
+}
+
+.logo {
+    width: 300px;
+    border-radius: 20px;
+}
+
+.border {
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+.box-1 {
+    display: flex;
+    width: 1000px;
+    height: 500px;
+}
+
+.title {
+    background-color: white;
+    background-size: cover;
+    color: black;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px;
+}
+
+.room {
+    text-align: left;
+    border: 1px solid white;
+    padding: 10px;
+    width: 30%;
+    /* background-color: black; */
+    color: white;
+    margin: 10px;
+    border-radius: 20px;
+    overflow-x: visible;
+    overflow-y: scroll;
+}
+
+.room::-webkit-scrollbar {
+    width: 1em;
+    margin: 10px;
+}
+
+.room::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.room::-webkit-scrollbar-thumb {
+    background-color: black;
+    outline: 1px solid slategrey;
+    border-radius: 20px;
+}
+
+.RoomName {
+    text-align: center;
+    padding: 10px 55px;
+    border: 1px solid white;
+    color: white;
+    border-radius: 50px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.RoomName:hover {
+    background-color: white;
+    color: black;
+}
+
+.chating {
+    width: 70%;
+    text-align: center;
+    border: 1px solid white;
+    /* background-color: black; */
+    color: white;
+    margin: 10px;
+    position: relative;
+    text-align: left;
+    border-radius: 20px;
+    overflow-x: visible;
+    overflow-y: scroll;
+}
+
+.chating::-webkit-scrollbar {
+    width: 1em;
+    margin: 10px;
+}
+
+.chating::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.chating::-webkit-scrollbar-thumb {
+    background-color: black;
+    outline: 1px solid slategrey;
+    border-radius: 20px;
+}
+
+#chatroom_input {
+    text-align: center;
+    padding: 10px 53px;
+    background-color: white;
+    border-radius: 50px;
+    font-family: 'Kanit', sans-serif;
+    margin-bottom: 20px;
+}
+
+#form {
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: 10px;
+    width: fit-content;
+    margin-left: auto;
+    padding: 10px;
+}
+
+#form-input {
+    text-align: center;
+    padding: 5px 140px;
+    background-color: white;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+}
+
+#submit-button {
+    text-align: center;
+    padding: 5px 15px;
+    background-color: white;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+}
+
+#geo-button {
+    text-align: center;
+    padding: 5px 15px;
+    background-color: white;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.Friend {
+    padding: 10px;
+    margin: 20px;
+    background-color: grey;
+    color: white;
+    border-radius: 0px 10px 10px 10px;
+    font-family: 'Kanit', sans-serif;
+    width: fit-content;
+    text-align: left;
+    margin-right: auto;
+}
+
+.User {
+    padding: 10px;
+    margin: 10px;
+    background-color: white;
+    color: black;
+    width: fit-content;
+    border-radius: 10px 10px 0px 10px;
+    font-family: 'Kanit', sans-serif;
+    text-align: right;
+    margin-left: auto;
+}
