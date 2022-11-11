@@ -21,8 +21,21 @@ require("../public/db/mongoose")
 app.use(express.static(publicDirectoryPath))
 
 
+//storage Engine fro multer
+const storage = multer.diskStorage(
+    {
+        destination: "./public/img/",
+        filenmae: (req, file, cb) => {
+            cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+        }
+    }
 
+)
 
+//setting uplload path for the multer
+const upload = multer(
+    { storage: storage }
+).single("uploaded_file")
 
 
 
@@ -34,7 +47,6 @@ app.post("/", async (req, res) => {
     const user = new User(req.body)
     user.save()
     res.status('200').redirect("/login.html?room=" + req.body.room)
-
 
 
 })
@@ -77,6 +89,16 @@ app.post("/chat.html", async (req, res) => {
     // }
     const obj = await mongoose.connection.collection('users').find({ room: "Ninad" })
     console.log(obj)
+
+    //uploading of file
+    upload(req, res, (err) => {
+        if (err) {
+            res.render("/login.html")
+        }
+        else {
+            console.log("File uploaded succesfully ")
+        }
+    })
 })
 
 io.on('connection', (socket) => {
@@ -93,6 +115,10 @@ io.on('connection', (socket) => {
 
         socket.emit('message', generateMessage('Admin', 'Welcome!'))
         socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`))
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
 
         callback()
     })
@@ -120,7 +146,12 @@ io.on('connection', (socket) => {
 
         if (user) {
             io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left!`))
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
+
     })
 })
 
